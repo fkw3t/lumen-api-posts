@@ -22,6 +22,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'name', 'email', 'password', 'user'
     ];
 
+    protected $perPage = 5;
+
     /**
      * The attributes excluded from the model's JSON form.
      *

@@ -2,92 +2,60 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Base;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 abstract class BaseController extends Controller
 {
+    protected object $class;
+
     public function index()
     {
-        return response()
-            ->json(
-                User::select('id', 'user', 'name')
-                ->get(), 201
-            );
+        return response()->json($this->class->get(), 201);
     }
 
     public function get(int $id)
     {
-        $user = User::find($id);
-        if($user)
+        $issetClass = $this->class::find($id);
+        if($issetClass)
         {
-            return response()
-                ->json(
-                    $user->select('id', 'user', 'name')
-                    ->get(), 201
-                );
+            return response()->json($this->class->get(), 201);
         }
         else
         {
-            return response()->json(['error' => 'Usuário inexistente'], 204);
+            return response()->json(['error' => 'Recurso não encontrado'], 204);
         }
-
-
-        // return response()
-        //     ->json(
-        //         $user->select('id', 'user', 'name')
-        //         ->get(), 201
-        //     );
     }
 
     public function store(Request $request)
     {
-        return response()
-            ->json(
-                User::create([
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'password' => Hash("md5" ,$request->password),
-                    'user' => $request->user
-                ], 201
-                )
-            );
+        return response()->json($this->class::create([$request->all]), 201);
     }
 
     public function update(Request $request, int $id)
     {
-        $user = User::find($id);
-        if($user)
+        $issetClass = $this->class::find($id);
+        if($issetClass)
         {
-            $user->fill($request->all());
-            $user->save();
+            $this->class->fill($request->all());
+            $this->class->save();
             
-            return response()
-                ->json(
-                    $user, 200
-                );
+            return response()->json($this->class, 200);
         }
         else
         {
-            return response()->json(['error' => 'Usuário inexistente'], 204);
+            return response()->json(['error' => 'Recurso não encontrado'], 204);
         }
 
     }
 
     public function destroy(int $id)
     {
-        $user = User::find($id);
-        
-        if($user)
+        $qtdRecursosRemovidos = $this->class::destroy($id);
+        if($qtdRecursosRemovidos === 0)
         {
-            User::destroy($id);
-            return response()->json(['msg' => 'Usuário excluído com sucesso!'], 204);
+            return response()->json(['error' => 'Recurso não encontrado'], 404);
         }
-        else
-        {
-            return response()->json(['error' => 'Usuário inexistente'], 404);
-        }
+        return response()->json(['msg' => 'Recurso removido'], 204);
     }
 
 }

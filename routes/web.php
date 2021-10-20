@@ -33,11 +33,31 @@ $router->group(['prefix' => '/api'], function () use ($router)
 
     $router->group(['prefix' => '/post'], function () use ($router)
     {   
+        // main table: post
         $router->get('', 'PostController@index');
         $router->get('{id}', 'PostController@get');
         $router->post('store', 'PostController@store');
         $router->put('edit/{id}', 'PostController@update');
         $router->delete('delete/{id}', 'PostController@destroy');
+
+        // relationship: comment
+        $router->group(['prefix' => '/{post_id}'], function () use ($router)
+        {
+            $router->get('comment', 'PostController@getComments');
+            $router->get('comment/{comment_id}', 'PostController@getComment');
+            $router->post('store', 'PostController@postComment');
+            $router->put('edit/{id}', 'PostController@editComment');
+            $router->delete('delete/{id}', 'PostController@removeComment');
+        });
+    });
+
+    $router->group(['prefix' => '/comment'], function () use ($router)
+    {   
+        $router->get('', 'CommentController@index');
+        $router->get('{id}', 'CommentController@get');
+        $router->post('store', 'CommentController@store');
+        $router->put('edit/{id}', 'CommentController@update');
+        $router->delete('delete/{id}', 'CommentController@destroy');
     
     });
 

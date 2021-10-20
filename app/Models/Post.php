@@ -8,9 +8,14 @@ class Post extends Model
 {
     protected $table = 'posts';
     protected $fillable = ['title', 'content', 'user_id'];
+    protected $perPage = 5;
 
     public function User()
     {
         return $this->belongsTo(User::class);
+    }
+    public function Comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 }

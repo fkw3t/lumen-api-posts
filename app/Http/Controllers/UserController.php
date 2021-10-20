@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         return response()
             ->json(
                 User::select('id', 'user', 'name')
-                ->get(), 201
+                ->get()->paginate($request->per_page), 201
             );
     }
 

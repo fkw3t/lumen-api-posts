@@ -2,27 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Post;
+use App\Models\Comment;
 use Illuminate\Http\Request;
 
-class PostController extends Controller
-{
-    public function index(Request $request)
+class CommentController extends Controller
+{ 
+    public function index()
     {
         return response()
             ->json(
-                Post::paginate(), 201
+                Comment::all(), 201
             );
     }
 
     public function get(int $id)
     {
-        $post = Post::find($id);
-        if($post)
+        $comment = Comment::find($id);
+        if($comment)
         {
             return response()
                 ->json(
-                    Post::find($id), 201
+                    Comment::find($id), 201
                 );
         }
         else
@@ -35,10 +35,10 @@ class PostController extends Controller
     {
         return response()
             ->json(
-                Post::create([
-                    'title' => $request->title,
-                    'content' => $request->content,
-                    'user_id' => $request->user_id
+                Comment::create([
+                    'post_id' => $request->post_id,
+                    'user_id' => $request->user_id,
+                    'comment' => $request->comment
                 ], 201
                 )
             );
@@ -46,15 +46,15 @@ class PostController extends Controller
 
     public function update(Request $request, int $id)
     {
-        $post = Post::find($id);
-        if($post)
+        $comment = Comment::find($id);
+        if($comment)
         {
-            $post->fill($request->all());
-            $post->save();
+            $comment->fill($request->all());
+            $comment->save();
             
             return response()
                 ->json(
-                    $post, 200
+                    $comment, 200
                 );
         }
         else
@@ -66,27 +66,17 @@ class PostController extends Controller
 
     public function destroy(int $id)
     {
-        $post = Post::find($id);
-        if($post)
+        $comment = Comment::find($id);
+        
+        if($comment)
         {
-            Post::destroy($id);
+            Comment::destroy($id);
             return response()->json(['msg' => 'Usuário excluído com sucesso!'], 204);
         }
         else
-        
         {
             return response()->json(['error' => 'Usuário inexistente'], 404);
         }
     }
-
-    // actions relationship: comments
-
-    public function getComments(int $post_id)
-    {
-        $post_comments = Post::find($post_id)->Comments;
-        return response()
-            ->json($post_comments, 201);
-    }
-
-
 }
+
