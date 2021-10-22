@@ -12,8 +12,7 @@ class UserController extends Controller
     {
         return response()
             ->json(
-                User::select('id', 'user', 'name')
-                ->get()->paginate($request->per_page), 201
+                User::select('id', 'user', 'name')->paginate($request->per_page), 201
             );
     }
 
@@ -49,7 +48,7 @@ class UserController extends Controller
                 User::create([
                     'name' => $request->name,
                     'email' => $request->email,
-                    'password' => Hash("md5" ,$request->password),
+                    'password' => Hash::make($request->password),
                     'user' => $request->user
                 ], 201
                 )

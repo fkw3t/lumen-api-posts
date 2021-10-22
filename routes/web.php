@@ -19,7 +19,8 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->group(['prefix' => '/api'], function () use ($router)
+
+$router->group(['prefix' => '/api', 'middleware' => 'jwtAuth'], function () use ($router)
 {
     $router->group(['prefix' => '/user'], function () use ($router)
     {   
@@ -28,9 +29,9 @@ $router->group(['prefix' => '/api'], function () use ($router)
         $router->post('store', 'UserController@store');
         $router->put('edit/{id}', 'UserController@update');
         $router->delete('delete/{id}', 'UserController@destroy');
-    
+        
     });
-
+    
     $router->group(['prefix' => '/post'], function () use ($router)
     {   
         // main table: post
@@ -39,7 +40,7 @@ $router->group(['prefix' => '/api'], function () use ($router)
         $router->post('store', 'PostController@store');
         $router->put('edit/{id}', 'PostController@update');
         $router->delete('delete/{id}', 'PostController@destroy');
-
+        
         // relationship: comment
         $router->group(['prefix' => '/{post_id}'], function () use ($router)
         {
@@ -50,7 +51,7 @@ $router->group(['prefix' => '/api'], function () use ($router)
             $router->delete('delete/{id}', 'PostController@removeComment');
         });
     });
-
+    
     $router->group(['prefix' => '/comment'], function () use ($router)
     {   
         $router->get('', 'CommentController@index');
@@ -58,8 +59,10 @@ $router->group(['prefix' => '/api'], function () use ($router)
         $router->post('store', 'CommentController@store');
         $router->put('edit/{id}', 'CommentController@update');
         $router->delete('delete/{id}', 'CommentController@destroy');
-    
+        
     });
-
-
+    
+    
 });
+
+$router->post('/api/login', 'TokenController@login');

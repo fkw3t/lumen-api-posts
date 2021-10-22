@@ -83,10 +83,15 @@ class PostController extends Controller
 
     public function getComments(int $post_id)
     {
-        $post_comments = Post::find($post_id)->Comments;
-        return response()
-            ->json($post_comments, 201);
+        $postComments = Post::find($post_id)->Comments;
+        if($postComments)
+        {
+            return response()->json($postComments, 201);
+        }
+        else
+        {
+            return response()
+            ->json(['error' => 'Esse post não possui comentários'], 204);
+        }
     }
-
-
 }
