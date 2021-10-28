@@ -28,15 +28,12 @@ class CommentController extends Controller
 
     public function store(Request $request)
     {
-        return response()
-            ->json(
-                Comment::create([
-                    'post_id' => $request->post_id,
-                    'user_id' => $request->user_id,
-                    'comment' => $request->comment
-                ], 201
-                )
-            );
+        $comment = Comment::create([
+            'post_id' => $request->post_id,
+            'user_id' => $request->user_id,
+            'comment' => $request->comment
+        ]);
+        return new CommentResource($comment);
     }
 
     public function update(Request $request, int $id)
@@ -47,14 +44,11 @@ class CommentController extends Controller
             $comment->fill($request->all());
             $comment->save();
             
-            return response()
-                ->json(
-                    $comment, 200
-                );
+            return new CommentResource($comment);
         }
         else
         {
-            return response()->json(['error' => 'Post inexistente'], 204);
+            return response()->json('Post inexistente', 204);
         }
 
     }
@@ -66,11 +60,12 @@ class CommentController extends Controller
         if($comment)
         {
             Comment::destroy($id);
-            return response()->json(['msg' => 'Usuário excluído com sucesso!'], 204);
+
+            return response()->json('Usuário excluído com sucesso!', 204);
         }
         else
         {
-            return response()->json(['error' => 'Usuário inexistente'], 404);
+            return response()->json('Usuário inexistente', 404);
         }
     }
 }

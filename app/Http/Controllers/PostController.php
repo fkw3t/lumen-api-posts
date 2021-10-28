@@ -25,31 +25,16 @@ class PostController extends Controller
         else{
             return response()->json('Post não encontrado', 204);
         }
-        // $post = Post::find($id);
-        // if($post)
-        // {
-        //     return response()
-        //         ->json(
-        //             Post::find($id), 201
-        //         );
-        // }
-        // else
-        // {
-        //     return response()->json(['error' => 'Post inexistente'], 204);
-        // }
     }
 
     public function store(Request $request)
     {
-        return response()
-            ->json(
-                Post::create([
-                    'title' => $request->title,
-                    'content' => $request->content,
-                    'user_id' => $request->user_id
-                ], 201
-                )
-            );
+        $post = Post::create([
+            'title' => $request->title,
+            'content' => $request->content,
+            'user_id' => $request->user_id
+        ]);
+        return new PostResource($post);
     }
 
     public function update(Request $request, int $id)
@@ -58,16 +43,12 @@ class PostController extends Controller
         if($post)
         {
             $post->fill($request->all());
-            $post->save();
-            
-            return response()
-                ->json(
-                    $post, 200
-                );
+            $post->save();            
+            return new PostResource($post);
         }
         else
         {
-            return response()->json(['error' => 'Post inexistente'], 204);
+            return response()->json('Post inexistente', 204);
         }
 
     }
@@ -78,12 +59,12 @@ class PostController extends Controller
         if($post)
         {
             Post::destroy($id);
-            return response()->json(['msg' => 'Usuário excluído com sucesso!'], 204);
+            return response()->json('Usuário excluído com sucesso!', 204);
         }
         else
         
         {
-            return response()->json(['error' => 'Usuário inexistente'], 404);
+            return response()->json('Usuário inexistente', 404);
         }
     }
 
@@ -100,7 +81,7 @@ class PostController extends Controller
         else
         {
             return response()
-            ->json(['error' => 'Esse post não possui comentários'], 204);
+            ->json('Esse post não possui comentários', 204);
         }
     }
 }

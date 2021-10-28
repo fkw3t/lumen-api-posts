@@ -42,26 +42,17 @@ class UserController extends Controller
     public function update(Request $request, int $id)
     {
         $user = User::find($id);
-        $user->fill($request->all());
-        $user->save();
-
-        return new UserResource($user);
-
-        // $user = User::find($id);
-        // if($user)
-        // {
-        //     $user->fill($request->all());
-        //     $user->save();
+        if($user)
+        {
+            $user->fill($request->all());
+            $user->save();
             
-        //     return response()
-        //         ->json(
-        //             $user, 200
-        //         );
-        // }
-        // else
-        // {
-        //     return response()->json(['error' => 'Usuário inexistente'], 204);
-        // }
+            return new UserResource($user);
+        }
+        else
+        {
+            return response()->json('Usuário inexistente', 204);
+        }
 
     }
 
