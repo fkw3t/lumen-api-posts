@@ -2,32 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CommentCollection;
+use App\Http\Resources\CommentResource;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
 { 
-    public function index()
+    public function index(Request $request)
     {
-        return response()
-            ->json(
-                Comment::all(), 201
-            );
+        return new CommentCollection(Comment::paginate($request->per_page));
     }
 
     public function get(int $id)
     {
         $comment = Comment::find($id);
-        if($comment)
+        if(!is_null($comment))
         {
-            return response()
-                ->json(
-                    Comment::find($id), 201
-                );
+            return new CommentResource($comment);
         }
-        else
-        {
-            return response()->json(['error' => 'Post inexistente'], 204);
+        else{
+            return response()->json('Comentário não encontrado', 204);
         }
     }
 

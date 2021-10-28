@@ -9,20 +9,12 @@ class Post extends Model
     protected $table = 'posts';
     protected $fillable = ['title', 'content', 'user_id'];
     protected $perPage = 5;
-    protected $appends = ['links'];
 
-    public function getLinksAttribute(): array
-    {
-        return [
-            'comments' => '/api/post/' . $this->id . '/comment'
-        ];
-    }
-
-    public function Users()
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
-    public function Comments()
+    public function comments()
     {
         return $this->hasMany(Comment::class);
     }

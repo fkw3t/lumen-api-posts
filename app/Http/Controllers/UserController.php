@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserCollection;
+use App\Http\Resources\UserResource;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -10,83 +13,70 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        return response()
-            ->json(
-                User::select('id', 'user', 'name')->paginate($request->per_page), 201
-            );
+        return new UserCollection(User::paginate($request->per_page));
     }
 
     public function get(int $id)
     {
         $user = User::find($id);
-        if($user)
+        if(!is_null($user))
         {
-            return response()
-                ->json(
-                    User::select('id', 'user', 'name')
-                    ->where('id', '=', $id)
-                    ->first(), 201
-                );
+            return new UserResource($user);
         }
-        else
-        {
-            return response()->json(['error' => 'Usuário inexistente'], 204);
+        else{
+            return response()->json('Usuário não encontrado', 204);
         }
-
-
-        // return response()
-        //     ->json(
-        //         $user->select('id', 'user', 'name')
-        //         ->get(), 201
-        //     );
     }
 
     public function store(Request $request)
     {
-        return response()
-            ->json(
-                User::create([
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'password' => Hash::make($request->password),
-                    'user' => $request->user
-                ], 201
-                )
-            );
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'user' => $request->user
+        ]);
+        return new UserResource($user);
     }
 
     public function update(Request $request, int $id)
     {
         $user = User::find($id);
-        if($user)
-        {
-            $user->fill($request->all());
-            $user->save();
+        $user->fill($request->all());
+        $user->save();
+
+        return new UserResource($user);
+
+        // $user = User::find($id);
+        // if($user)
+        // {
+        //     $user->fill($request->all());
+        //     $user->save();
             
-            return response()
-                ->json(
-                    $user, 200
-                );
-        }
-        else
-        {
-            return response()->json(['error' => 'Usuário inexistente'], 204);
-        }
+        //     return response()
+        //         ->json(
+        //             $user, 200
+        //         );
+        // }
+        // else
+        // {
+        //     return response()->json(['error' => 'Usuário inexistente'], 204);
+        // }
 
     }
 
     public function destroy(int $id)
     {
         $user = User::find($id);
-        
+
         if($user)
         {
             User::destroy($id);
-            return response()->json(['msg' => 'Usuário excluído com sucesso!'], 204);
+            return response()->json('Usuário excluído com sucesso', 204);
         }
         else
         {
-            return response()->json(['error' => 'Usuário inexistente'], 404);
+            return response()->json('Usuário inexistente', 404);
         }
     }
 

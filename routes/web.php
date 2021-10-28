@@ -24,41 +24,41 @@ $router->group(['prefix' => '/api', 'middleware' => 'jwtAuth'], function () use 
 {
     $router->group(['prefix' => '/user'], function () use ($router)
     {   
-        $router->get('', 'UserController@index');
-        $router->get('{id}', 'UserController@get');
+        $router->get('', ['as' => 'user.getAll', 'uses' => 'UserController@index']);
+        $router->get('{id}', ['as' => 'user.get', 'uses' => 'UserController@get']);
         $router->post('store', 'UserController@store');
-        $router->put('edit/{id}', 'UserController@update');
-        $router->delete('delete/{id}', 'UserController@destroy');
+        $router->put('edit/{id}', ['as' => 'user.edit', 'uses' => 'UserController@update']);
+        $router->delete('delete/{id}', ['as' => 'user.delete', 'uses' => 'UserController@destroy']);
         
     });
     
     $router->group(['prefix' => '/post'], function () use ($router)
     {   
         // main table: post
-        $router->get('', 'PostController@index');
-        $router->get('{id}', 'PostController@get');
-        $router->post('store', 'PostController@store');
-        $router->put('edit/{id}', 'PostController@update');
-        $router->delete('delete/{id}', 'PostController@destroy');
-        
+        $router->get('', ['as' => 'post.getAll', 'uses' => 'PostController@index']);
+        $router->get('{id}', ['as' => 'post.get', 'uses' => 'PostController@get']);
+        $router->post('store', ['as' => 'post.store', 'uses' => 'PostController@store']);
+        $router->put('edit/{id}', ['as' => 'post.edit', 'uses' => 'PostController@update']);
+        $router->delete('delete/{id}', ['as' => 'post.delete', 'uses' => 'PostController@destroy']);
+         
         // relationship: comment
         $router->group(['prefix' => '/{post_id}'], function () use ($router)
         {
-            $router->get('comment', 'PostController@getComments');
-            $router->get('comment/{comment_id}', 'PostController@getComment');
-            $router->post('store', 'PostController@postComment');
-            $router->put('edit/{id}', 'PostController@editComment');
-            $router->delete('delete/{id}', 'PostController@removeComment');
+            $router->get('comment', ['as' => 'post.comment.getAll', 'uses' => 'PostController@getComments']);
+            // $router->get('comment/{comment_id}', ['as' => 'post.comment.get', 'uses' => 'PostController@getComment']);
+            // $router->post('store', ['as' => 'post.comment.store', 'uses' => 'PostController@postComment']);
+            // $router->put('edit/{id}', ['as' => 'post.comment.edit', 'uses' => 'PostController@editComment']);
+            // $router->delete('delete/{id}', ['as' => 'post.comment.delete', 'uses' => 'PostController@removeComment']);
         });
     });
     
     $router->group(['prefix' => '/comment'], function () use ($router)
     {   
-        $router->get('', 'CommentController@index');
-        $router->get('{id}', 'CommentController@get');
-        $router->post('store', 'CommentController@store');
-        $router->put('edit/{id}', 'CommentController@update');
-        $router->delete('delete/{id}', 'CommentController@destroy');
+        $router->get('', ['as' => 'comment.getAll', 'uses' => 'CommentController@index']);
+        $router->get('{id}', ['as' => 'comment.get', 'uses' => 'CommentController@get']);
+        $router->post('store', ['as' => 'comment.store', 'uses' => 'CommentController@store']);
+        $router->put('edit/{id}', ['as' => 'comment.edit', 'uses' => 'CommentController@update']);
+        $router->delete('delete/{id}', ['as' => 'comment.delete', 'uses' => 'CommentController@destroy']);
         
     });
     

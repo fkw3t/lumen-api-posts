@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CommentResource;
+use App\Http\Resources\PostCollection;
+use App\Http\Resources\PostResource;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
@@ -9,26 +12,31 @@ class PostController extends Controller
 {
     public function index(Request $request)
     {
-        return response()
-            ->json(
-                Post::paginate(), 201
-            );
+        return new PostCollection(Post::paginate($request->per_page));
     }
 
     public function get(int $id)
     {
         $post = Post::find($id);
-        if($post)
+        if(!is_null($post))
         {
-            return response()
-                ->json(
-                    Post::find($id), 201
-                );
+            return new PostResource($post);
         }
-        else
-        {
-            return response()->json(['error' => 'Post inexistente'], 204);
+        else{
+            return response()->json('Post não encontrado', 204);
         }
+        // $post = Post::find($id);
+        // if($post)
+        // {
+        //     return response()
+        //         ->json(
+        //             Post::find($id), 201
+        //         );
+        // }
+        // else
+        // {
+        //     return response()->json(['error' => 'Post inexistente'], 204);
+        // }
     }
 
     public function store(Request $request)
@@ -86,6 +94,7 @@ class PostController extends Controller
         $postComments = Post::find($post_id)->Comments;
         if($postComments)
         {
+            return CommentResource::collection($postComments);
             return response()->json($postComments, 201);
         }
         else
